@@ -8,8 +8,18 @@ const {
   deleteProduct,
 } = require('./products.controller')
 
-router.route('/').get(getProducts).post(createProduct)
+const { protect, authorize } = require('../../middleware/auth')
+const ADMIN_STRING = 'admin'
+const MANAGER_STRING = 'manager'
+router
+  .route('/')
+  .get(getProducts)
+  .post(authorize(ADMIN_STRING, MANAGER_STRING), createProduct)
 
-router.route('/:id').get(getProduct).put(updateProduct).delete(deleteProduct)
+router
+  .route('/:id')
+  .get(getProduct)
+  .put(authorize(ADMIN_STRING, MANAGER_STRING), updateProduct)
+  .delete(authorize(ADMIN_STRING, MANAGER_STRING), deleteProduct)
 
 module.exports = router
