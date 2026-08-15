@@ -27,13 +27,14 @@ app.use(express.urlencoded({ extended: true })) // Parses URL-encoded data
 const inventoryRoutes = require('./api/inventory');
 const warehouseRoutes = require('./api/warehouse');
 const trackingRoutes = require('./api/tracking');
-const recognitionRoutes = require('./api/recognition');
 const userRoutes = require('./api/users');
 */
 // const productRoutes = require('../src/api/products/products.controller')
 const productRoutes = require('./api/products/products.router')
 connectDB()
 const authRoutes = require('./api/auth/auth.router')
+
+const recognitionRoutes = require('./api/recognition/recognition.router')
 
 // ==========================================
 // 3. MOUNT ROUTES
@@ -49,11 +50,11 @@ app.get('/health', (req, res) => {
 app.use(`${API_PREFIX}/inventory`, inventoryRoutes);
 app.use(`${API_PREFIX}/warehouses`, warehouseRoutes);
 app.use(`${API_PREFIX}/tracking`, trackingRoutes);
-app.use(`${API_PREFIX}/recognition`, recognitionRoutes);
 app.use(`${API_PREFIX}/users`, userRoutes);
 */
 app.use(`${API_PREFIX}/products`, productRoutes)
 app.use(`${API_PREFIX}/auth`, authRoutes)
+app.use(`${API_PREFIX}/recognition`, recognitionRoutes)
 
 // ==========================================
 // 4. ERROR HANDLING

@@ -20,6 +20,12 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Please add a price'],
     },
+    barcode: {
+      type: String,
+      required: [true, 'Please add a barcode'],
+      unique: true,
+      trim: true,
+    },
     quantity: {
       type: Number,
       default: 0,

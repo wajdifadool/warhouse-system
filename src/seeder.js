@@ -42,6 +42,8 @@ const importData = async () => {
         category: randomCategory,
         price: Math.floor(Math.random() * 1000) + 10,
         quantity: Math.floor(Math.random() * 50),
+
+        barcode: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
       }
     })
 
