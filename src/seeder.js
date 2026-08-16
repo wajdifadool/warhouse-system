@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const path = require('path')
+const colors = require('colors')
 
 // Import your model
 
@@ -10,6 +11,7 @@ const Product = require('./api/products/Product')
 // dotenv.config({ path: path.join(__dirname, '.env') })
 dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 
+// Products
 const importData = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI)
@@ -57,7 +59,7 @@ const importData = async () => {
     process.exit(1)
   }
 }
-
+// products
 const destroyData = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI)
@@ -72,6 +74,8 @@ const destroyData = async () => {
 
 if (process.argv[2] === '-d') {
   destroyData()
-} else {
+} else if (process.argv[2] === '-i') {
   importData()
+} else {
+  console.log(colors.red(`Missing args:`.bold))
 }
