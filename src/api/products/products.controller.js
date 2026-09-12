@@ -10,6 +10,7 @@ const asyncHandler = require('../../middleware/asyncHandler')
 // @access  Public (or Private depending on your auth)
 exports.getProducts = asyncHandler(async (req, res, next) => {
   let query
+  console.log('Product called')
 
   // 1. Copy req.query
   const reqQuery = { ...req.query }
@@ -115,7 +116,7 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    data: product,
+    data: { product },
   })
 })
 

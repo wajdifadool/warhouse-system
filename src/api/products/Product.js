@@ -2,6 +2,13 @@ const mongoose = require('mongoose')
 
 const ProductSchema = new mongoose.Schema(
   {
+    sku: {
+      type: String,
+      required: [true, 'Please add an SKU'],
+      unique: false,
+      trim: true,
+    },
+
     name: {
       type: String,
       required: [true, 'Please add a product name'],
@@ -23,7 +30,7 @@ const ProductSchema = new mongoose.Schema(
     barcode: {
       type: String,
       required: [true, 'Please add a barcode'],
-      unique: true,
+      unique: false,
       trim: true,
     },
     quantity: {

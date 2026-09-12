@@ -28,3 +28,14 @@ Different configurations → you can decide independently which rules are errors
 Editor integration → see errors/warnings while coding.
 CI → optionally make ESLint fail your build later.
 ```
+
+run the project :
+
+run the redis : redis-server
+run the server : npm run dev
+run the worker : npm run worker
+
+<!-- Venev for the image rengtion proecss,  -->
+
+install Requirments
+it will be called upon the re

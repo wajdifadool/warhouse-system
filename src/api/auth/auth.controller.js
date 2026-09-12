@@ -30,6 +30,16 @@ exports.register = asyncHandler(async (req, res) => {
   sendTokenResponse(user, 201, res)
 })
 
+// @desc    Get current logged in user
+// @route   GET /api/v1/auth/me
+// @access  Private
+exports.getMe = asyncHandler(async (req, res) => {
+  // we have accses to req.user via the protect middleware
+  const user = await User.findById(req.user.id)
+
+  res.status(200).json({ succsess: true, data: user })
+})
+
 // @desc    Login user
 // @route   POST /api/v1/auth/login
 // @access  Public

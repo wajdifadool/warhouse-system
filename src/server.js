@@ -3,6 +3,7 @@ const path = require('path')
 const cors = require('cors')
 const helmet = require('helmet')
 const dotenv = require('dotenv')
+const morgan = require('morgan')
 
 dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 const connectDB = require('./config/db')
@@ -17,6 +18,7 @@ app.use(helmet()) // Adds security-related HTTP headers
 app.use(cors()) // Enables Cross-Origin Resource Sharing
 app.use(express.json()) // Parses incoming JSON requests
 app.use(express.urlencoded({ extended: true })) // Parses URL-encoded data
+app.use(morgan('dev'))
 
 // ==========================================
 // 2. ROUTE IMPORTS
@@ -25,7 +27,7 @@ app.use(express.urlencoded({ extended: true })) // Parses URL-encoded data
 /*
 
 const inventoryRoutes = require('./api/inventory');
-const warehouseRoutes = require('./api/warehouse');
+
 const trackingRoutes = require('./api/tracking');
 const userRoutes = require('./api/users');
 */
@@ -34,6 +36,8 @@ const productRoutes = require('./api/products/products.router')
 connectDB()
 const authRoutes = require('./api/auth/auth.router')
 
+const warehouseRoutes = require('./api/warehouse/warhouse.router')
+const shelfRoutes = require('./api/warehouse/shelf.router')
 const recognitionRoutes = require('./api/recognition/recognition.router')
 
 // ==========================================
@@ -48,13 +52,15 @@ app.get('/health', (req, res) => {
 
 /*
 app.use(`${API_PREFIX}/inventory`, inventoryRoutes);
-app.use(`${API_PREFIX}/warehouses`, warehouseRoutes);
+
 app.use(`${API_PREFIX}/tracking`, trackingRoutes);
 app.use(`${API_PREFIX}/users`, userRoutes);
 */
 app.use(`${API_PREFIX}/products`, productRoutes)
 app.use(`${API_PREFIX}/auth`, authRoutes)
 app.use(`${API_PREFIX}/recognition`, recognitionRoutes)
+app.use(`${API_PREFIX}/warehouses`, warehouseRoutes)
+app.use(`${API_PREFIX}/shelfs`, shelfRoutes)
 
 // ==========================================
 // 4. ERROR HANDLING

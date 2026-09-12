@@ -15,101 +15,34 @@ const connection = {
   host: '127.0.0.1',
   port: 6379,
 }
-
-// const worker = new Worker(
-//   'ImageProcessingQueue',
-//   async (job) => {
-//     const { imageTaskId, imageUrl } = job.data
-//     console.log(
-//       `[Worker] Started processing job ${job.id} for image: ${imageUrl}`
-//     )
-
-//     // 1. Update status to 'processing'
-//     await ImageTask.findByIdAndUpdate(imageTaskId, { status: 'processing' })
-
-//     // 2. SIMULATE AI WORK (e.g., Python script or Node barcode scanner)
-//     // We will pause for 5 seconds to fake heavy image processing
-//     await new Promise((resolve) => setTimeout(resolve, 5000))
-
-//     // TODO: this will be the main work here
-//     // The data we "extracted" from the image
-//     const extractedShelfCode = 'Aisle-1-Rack-A'
-//     const extractedBarcode = '111120184aaa8'
-
-//     // --- AUDIT LOGIC START ---
-//     let auditStatus = 'Pass'
-//     let auditMessage = 'Product is correctly located on this shelf.'
-
-//     // TODO: add shelfs, add
-//     const shelf = await Shelf.findOne({ code: extractedShelfCode })
-//     const product = await Product.findOne({ barcode: extractedBarcode })
-//     console.log(product)
-
-//     if (!shelf || !product) {
-//       auditStatus = 'Fail'
-//       auditMessage =
-//         'Error: Scanned barcode or shelf code does not exist in the system.'
-//     } else {
-//       // Check if they belong together
-//       const inventoryRecord = await Inventory.findOne({
-//         shelf: shelf._id,
-//         product: product._id,
-//       })
-
-//       if (!inventoryRecord || inventoryRecord.quantity <= 0) {
-//         auditStatus = 'Fail'
-//         auditMessage =
-//           'Mismatch: Product found on the wrong shelf or inventory quantity is zero.'
-//       }
-//     }
-//     // --- AUDIT LOGIC END ---
-
-//     // 3. Update status to 'completed' and save results
-//     // Save everything back to the database
-//     await ImageTask.findByIdAndUpdate(imageTaskId, {
-//       status: 'completed',
-//       ocrResults: {
-//         detectedShelfCode: extractedShelfCode,
-//         detectedBarcode: extractedBarcode,
-//         auditStatus,
-//         auditMessage,
-//       },
-//       processedAt: Date.now(),
-//     })
-//     console.log(`[Worker] Finished job ${job.id} successfully!`)
-//   },
-//   { connection }
-// )
-// ________________
-// ________________
-// ________________
-// ________________
-
+// Demo simulation TODO: add image Recgnition Model here
 const worker = new Worker(
   'ImageProcessingQueue',
   async (job) => {
     const { imageTaskId, imageUrl } = job.data
-    console.log(`[Worker] Started processing job ${job.id}`)
+    console.log(
+      `[Worker] Started processing job ${job.id} for image: ${imageUrl}`
+    )
 
+    // 1. Update status to 'processing'
     await ImageTask.findByIdAndUpdate(imageTaskId, { status: 'processing' })
 
-    // Simulate 3 seconds of AI work
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+    // 2. SIMULATE AI WORK (e.g., Python script or Node barcode scanner)
+    // We will pause for 5 seconds to fake heavy image processing
+    await new Promise((resolve) => setTimeout(resolve, 5000))
 
+    // TODO: this will be the main work here
     // The data we "extracted" from the image
-    // const extractedShelfCode = 'LOC-A4-RB'
-    // const extractedBarcode = '123456789012'
-
     const extractedShelfCode = 'Aisle-1-Rack-A'
-    const extractedBarcode = '1111201848'
+    const extractedBarcode = '111120184aaa8'
 
     // --- AUDIT LOGIC START ---
     let auditStatus = 'Pass'
     let auditMessage = 'Product is correctly located on this shelf.'
 
+    // TODO: add shelfs, add
     const shelf = await Shelf.findOne({ code: extractedShelfCode })
     const product = await Product.findOne({ barcode: extractedBarcode })
-    console.log(shelf)
     console.log(product)
 
     if (!shelf || !product) {
@@ -131,6 +64,7 @@ const worker = new Worker(
     }
     // --- AUDIT LOGIC END ---
 
+    // 3. Update status to 'completed' and save results
     // Save everything back to the database
     await ImageTask.findByIdAndUpdate(imageTaskId, {
       status: 'completed',
@@ -142,13 +76,79 @@ const worker = new Worker(
       },
       processedAt: Date.now(),
     })
-
-    console.log(
-      `[Worker] Finished job ${job.id} - Audit: ${auditStatus} ${auditMessage}`
-    )
+    console.log(`[Worker] Finished job ${job.id} successfully!`)
   },
   { connection }
 )
+// ________________
+// ________________
+// ________________
+// ________________
+
+// const worker = new Worker(
+//   'ImageProcessingQueue',
+//   async (job) => {
+//     const { imageTaskId, imageUrl } = job.data
+//     console.log(`[Worker] Started processing job ${job.id}`)
+
+//     await ImageTask.findByIdAndUpdate(imageTaskId, { status: 'processing' })
+
+//     // Simulate 3 seconds of AI work
+//     await new Promise((resolve) => setTimeout(resolve, 3000))
+
+//     // The data we "extracted" from the image
+//     // const extractedShelfCode = 'LOC-A4-RB'
+//     // const extractedBarcode = '123456789012'
+
+//     const extractedShelfCode = 'Aisle-1-Rack-A'
+//     const extractedBarcode = '1111201848'
+
+//     // --- AUDIT LOGIC START ---
+//     let auditStatus = 'Pass'
+//     let auditMessage = 'Product is correctly located on this shelf.'
+
+//     const shelf = await Shelf.findOne({ code: extractedShelfCode })
+//     const product = await Product.findOne({ barcode: extractedBarcode })
+//     console.log(shelf)
+//     console.log(product)
+
+//     if (!shelf || !product) {
+//       auditStatus = 'Fail'
+//       auditMessage =
+//         'Error: Scanned barcode or shelf code does not exist in the system.'
+//     } else {
+//       // Check if they belong together
+//       const inventoryRecord = await Inventory.findOne({
+//         shelf: shelf._id,
+//         product: product._id,
+//       })
+
+//       if (!inventoryRecord || inventoryRecord.quantity <= 0) {
+//         auditStatus = 'Fail'
+//         auditMessage =
+//           'Mismatch: Product found on the wrong shelf or inventory quantity is zero.'
+//       }
+//     }
+//     // --- AUDIT LOGIC END ---
+
+//     // Save everything back to the database
+//     await ImageTask.findByIdAndUpdate(imageTaskId, {
+//       status: 'completed',
+//       ocrResults: {
+//         detectedShelfCode: extractedShelfCode,
+//         detectedBarcode: extractedBarcode,
+//         auditStatus,
+//         auditMessage,
+//       },
+//       processedAt: Date.now(),
+//     })
+
+//     console.log(
+//       `[Worker] Finished job ${job.id} - Audit: ${auditStatus} ${auditMessage}`
+//     )
+//   },
+//   { connection }
+// )
 
 // Error handling
 worker.on('failed', (job, err) => {
