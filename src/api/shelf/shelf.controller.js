@@ -1,4 +1,4 @@
-const Shelf = require('./Shelf')
+const Shelf = require('../../models/Shelf')
 const ErrorResponse = require('../../utils/ErrorResponse')
 const asyncHandler = require('../../middleware/asyncHandler')
 

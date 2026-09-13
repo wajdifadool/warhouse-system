@@ -1,4 +1,4 @@
-const Warehouse = require('./Warehouse')
+const Warehouse = require('../../models/Warehouse')
 const ErrorResponse = require('../../utils/ErrorResponse')
 const asyncHandler = require('../../middleware/asyncHandler')
 
