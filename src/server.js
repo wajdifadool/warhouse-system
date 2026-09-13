@@ -29,7 +29,6 @@ app.use(morgan('dev'))
 const inventoryRoutes = require('./api/inventory');
 
 const trackingRoutes = require('./api/tracking');
-const userRoutes = require('./api/users');
 */
 // const productRoutes = require('../src/api/products/products.controller')
 const productRoutes = require('./api/products/products.router')
@@ -37,8 +36,9 @@ connectDB()
 const authRoutes = require('./api/auth/auth.router')
 
 const warehouseRoutes = require('./api/warehouse/warhouse.router')
-const shelfRoutes = require('./api/warehouse/shelf.router')
+const shelfRoutes = require('./api/shelf/shelf.router')
 const recognitionRoutes = require('./api/recognition/recognition.router')
+const userRoutes = require('./api/users/users.router')
 
 // ==========================================
 // 3. MOUNT ROUTES
@@ -54,14 +54,14 @@ app.get('/health', (req, res) => {
 app.use(`${API_PREFIX}/inventory`, inventoryRoutes);
 
 app.use(`${API_PREFIX}/tracking`, trackingRoutes);
-app.use(`${API_PREFIX}/users`, userRoutes);
+
 */
 app.use(`${API_PREFIX}/products`, productRoutes)
 app.use(`${API_PREFIX}/auth`, authRoutes)
 app.use(`${API_PREFIX}/recognition`, recognitionRoutes)
 app.use(`${API_PREFIX}/warehouses`, warehouseRoutes)
 app.use(`${API_PREFIX}/shelfs`, shelfRoutes)
-
+app.use(`${API_PREFIX}/users`, userRoutes)
 // ==========================================
 // 4. ERROR HANDLING
 // ==========================================

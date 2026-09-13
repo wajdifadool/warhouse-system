@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const { protect, authorize } = require('../../middleware/auth')
+const ADMIN_STRING = 'admin'
 
 const {
   getWarehouses,
@@ -9,20 +11,15 @@ const {
   deleteWarehouse,
 } = require('./warehouse.controller')
 
-// Assuming you have your auth middleware mapped like in the product router
-const { protect, authorize } = require('../../middleware/auth')
-const ADMIN_STRING = 'admin'
-const MANAGER_STRING = 'manager'
+// apply middleware to all routes
+router.use(protect)
+router.use(authorize(ADMIN_STRING))
 
-router
-  .route('/')
-  .get(getWarehouses)
-  .post(authorize(ADMIN_STRING, MANAGER_STRING), createWarehouse)
-
+router.route('/').get(getWarehouses).post(createWarehouse)
 router
   .route('/:id')
   .get(getWarehouse)
-  .put(authorize(ADMIN_STRING, MANAGER_STRING), updateWarehouse)
-  .delete(authorize(ADMIN_STRING, MANAGER_STRING), deleteWarehouse)
+  .put(updateWarehouse)
+  .delete(deleteWarehouse)
 
 module.exports = router
