@@ -4,6 +4,8 @@ const cors = require('cors')
 const helmet = require('helmet')
 const dotenv = require('dotenv')
 const morgan = require('morgan')
+const pinoHttp = require('pino-http')
+const logger = require('./utils/logger')
 
 dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 const connectDB = require('./config/db')
@@ -19,7 +21,7 @@ app.use(cors()) // Enables Cross-Origin Resource Sharing
 app.use(express.json()) // Parses incoming JSON requests
 app.use(express.urlencoded({ extended: true })) // Parses URL-encoded data
 app.use(morgan('dev'))
-
+app.use(pinoHttp({ logger }))
 // ==========================================
 // 2. ROUTE IMPORTS
 // ==========================================
@@ -47,6 +49,7 @@ const API_PREFIX = '/api/v1'
 
 // Health check endpoint (Useful for Docker/Kubernetes/Load Balancers)
 app.get('/health', (req, res) => {
+  req.log.trace('health check')
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
