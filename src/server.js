@@ -6,6 +6,7 @@ const dotenv = require('dotenv')
 const morgan = require('morgan')
 const pinoHttp = require('pino-http')
 const logger = require('./utils/logger')
+const errorHandler = require('./middleware/errorHandler.js')
 
 dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 const connectDB = require('./config/db')
@@ -76,19 +77,21 @@ app.use((req, res, next) => {
   next(error)
 })
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error(`[Error]: ${err.message}`)
+app.use(errorHandler)
 
-  const statusCode = err.status || 500
-  res.status(statusCode).json({
-    error: {
-      message: err.message || 'Internal Server Error',
-      // Only show stack trace in development mode
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    },
-  })
-})
+// // // Global Error Handler
+// app.use((err, req, res, next) => {
+//   console.error(`[Error]: ${err.message}`)
+
+//   const statusCode = err.statusCode || 500
+//   res.status(statusCode).json({
+//     error: {
+//       message: err.message || 'Internal Server Error',
+//       // Only show stack trace in development mode
+//       stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+//     },
+//   })
+// })
 
 // ==========================================
 // 5. SERVER INITIALIZATION

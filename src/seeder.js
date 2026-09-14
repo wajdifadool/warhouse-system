@@ -45,18 +45,21 @@ const importData = async () => {
         email: 'admin@test.com',
         password: 'password123',
         role: 'admin',
+        isActive: true,
       },
       {
         name: 'Warehouse Manager One',
         email: 'manager1@test.com',
         password: 'password123',
         role: 'manager',
+        isActive: true,
       },
       {
         name: 'Warehouse Manager Two',
         email: 'manager2@test.com',
         password: 'password123',
         role: 'manager',
+        isActive: true,
       },
     ])
     console.log('👤 Users created...'.green)

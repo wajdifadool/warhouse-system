@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
+const { type } = require('os')
 
 const UserSchema = new mongoose.Schema(
   {
@@ -26,6 +27,10 @@ const UserSchema = new mongoose.Schema(
       minlength: 6,
       select: false, // don't return by default
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     authMethod: {
       type: String,
       enum: ['google', 'email_and_password'], // The allowed values
@@ -47,9 +52,10 @@ const UserSchema = new mongoose.Schema(
     confirmEmailToken: String,
     role: {
       type: String,
-      enum: ['user', 'manager', 'admin'], // You can adjust these roles as needed
-      default: 'user',
+      enum: ['worker', 'viewer', 'manager', 'admin'],
+      default: 'worker',
     },
+
     createdAt: {
       type: Date,
       default: Date.now,
@@ -62,6 +68,9 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
+
+UserSchema.index({ role: 1 })
+UserSchema.index({ isActive: 1 })
 
 // 🔐 Encrypt password before save
 UserSchema.pre('save', async function () {
