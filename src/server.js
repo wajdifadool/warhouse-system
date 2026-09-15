@@ -42,6 +42,7 @@ const warehouseRoutes = require('./api/warehouse/warhouse.router')
 const shelfRoutes = require('./api/shelf/shelf.router')
 const recognitionRoutes = require('./api/recognition/recognition.router')
 const userRoutes = require('./api/users/users.router')
+const locationRoutes = require('./api/location/locationRoutes.js')
 
 // ==========================================
 // 3. MOUNT ROUTES
@@ -64,8 +65,11 @@ app.use(`${API_PREFIX}/products`, productRoutes)
 app.use(`${API_PREFIX}/auth`, authRoutes)
 app.use(`${API_PREFIX}/recognition`, recognitionRoutes)
 app.use(`${API_PREFIX}/warehouses`, warehouseRoutes)
+app.use(`${API_PREFIX}/locations`, locationRoutes)
+// app.use(`${API_PREFIX}/warehouses/:warehouseId/locations`, locationRoutes) // nested Routes
 app.use(`${API_PREFIX}/shelfs`, shelfRoutes)
 app.use(`${API_PREFIX}/users`, userRoutes)
+
 // ==========================================
 // 4. ERROR HANDLING
 // ==========================================
