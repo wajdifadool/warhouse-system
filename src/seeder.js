@@ -3,14 +3,11 @@ const dotenv = require('dotenv')
 const path = require('path')
 const colors = require('colors')
 
-const Product = require('./api/products/Product')
-const User = require('./api/users/User')
-const Warehouse = require('./api/warehouse/Warehouse')
-// const Product = require('./api/products/Product')
-
-const Shelf = require('./api/warehouse/Shelf')
-const Inventory = require('./api/inventory/Inventory')
-
+const Product = require('./models/Product')
+const User = require('./models//User')
+const Warehouse = require('./models/Warehouse')
+const Shelf = require('./models/Shelf')
+const Inventory = require('./models/Inventory')
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 
