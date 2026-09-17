@@ -1,5 +1,7 @@
 const Product = require('../../models/Product')
 const ErrorResponse = require('../../utils/ErrorResponse')
+const { paginate } = require('../../utils/pagination')
+
 const asyncHandler = require('../../middleware/asyncHandler')
 
 // @desc    Get all products
@@ -9,84 +11,13 @@ const asyncHandler = require('../../middleware/asyncHandler')
 // @route   GET /api/v1/products
 // @access  Public (or Private depending on your auth)
 exports.getProducts = asyncHandler(async (req, res, next) => {
-  let query
-  console.log('Product called')
-
-  // 1. Copy req.query
-  const reqQuery = { ...req.query }
-
-  // 2. Fields to exclude from standard Mongoose filtering
-  const removeFields = ['select', 'sort', 'page', 'limit']
-
-  // Loop over removeFields and delete them from reqQuery
-  removeFields.forEach((param) => delete reqQuery[param])
-
-  // 3. Create query string
-  let queryStr = JSON.stringify(reqQuery)
-
-  // 4. Create operators ($gt, $gte, $lt, $lte, $in)
-  // This allows queries like: ?price[lte]=100
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`)
-
-  // Initialize the base query
-  query = Product.find(JSON.parse(queryStr))
-
-  // 5. Select Fields
-  // Allows queries like: ?select=name,price
-  if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ')
-    query = query.select(fields)
-  }
-
-  // 6. Sort
-  // Allows queries like: ?sort=price,-createdAt
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ')
-    query = query.sort(sortBy)
-  } else {
-    // Default sorting
-    query = query.sort('-createdAt')
-  }
-
-  // 7. Pagination setup
-  const page = parseInt(req.query.page, 10) || 1 // Default to page 1
-  const limit = parseInt(req.query.limit, 10) || 10 // Default to 10 items per page
-  const startIndex = (page - 1) * limit
-  const endIndex = page * limit
-
-  // Get total document count for the specific filter
-  const total = await Product.countDocuments(JSON.parse(queryStr))
-
-  // Apply pagination to the query
-  query = query.skip(startIndex).limit(limit)
-
-  // 8. Execute query
-  const products = await query
-
-  // 9. Pagination result object (for the frontend to know if there are more pages)
-  const pagination = {}
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit,
-    }
-  }
-
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit,
-    }
-  }
+  const result = await paginate(Product, req.query)
 
   // 10. Send Response
   res.status(200).json({
     success: true,
-    count: products.length, // Number of items on THIS page
-    total, // Total items in database matching the query
-    pagination, // Next/Prev page metadata
-    data: products,
+    count: result.length,
+    ...result,
   })
 })
 
@@ -158,5 +89,29 @@ exports.deleteProduct = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: {},
+  })
+})
+
+// @desc    Get product by BarCode
+// @route   GET /api/v1/products/barcode/:barcode
+// @access  Public
+exports.getProductByBarcode = asyncHandler(async (req, res, next) => {
+  const barcode = req.params.barcode
+  const product = await Product.findOne({ barcode })
+  res.status(200).json({
+    success: true,
+    data: product,
+  })
+})
+
+// @desc    Get product by sku
+// @route   GET /api/v1/products/barcode/:sku
+// @access  Public
+exports.getProductByBySKU = asyncHandler(async (req, res, next) => {
+  const sku = req.params.sku
+  const product = await Product.findOne({ sku })
+  res.status(200).json({
+    success: true,
+    data: product,
   })
 })

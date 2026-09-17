@@ -8,6 +8,8 @@ const User = require('./models//User')
 const Warehouse = require('./models/Warehouse')
 const Shelf = require('./models/Shelf')
 const Inventory = require('./models/Inventory')
+const Location = require('./models/Location')
+
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 
@@ -23,6 +25,7 @@ const importData = async () => {
     await Shelf.deleteMany()
     await Warehouse.deleteMany()
     await User.deleteMany()
+    await Location.deleteMany()
 
     // 2. DROP INDEXES (Prevents E11000 duplicate key errors)
     await Promise.all([
@@ -31,6 +34,7 @@ const importData = async () => {
       Shelf.collection.dropIndexes().catch(() => {}),
       Warehouse.collection.dropIndexes().catch(() => {}),
       User.collection.dropIndexes().catch(() => {}),
+      Location.collection.dropIndexes().catch(() => {}),
     ])
     console.log('🗑️  Old data and indexes destroyed...'.red)
 
@@ -84,14 +88,14 @@ const importData = async () => {
       // Create 5 shelves per warehouse
       for (let i = 1; i <= 5; i++) {
         shelvesData.push({
-          code: `Aisle-1-Rack-${i}`,
+          code: `A-01-0${i}`,
           warehouse: warehouse._id,
-          capacity: 100,
+          status: 'Empty',
         })
       }
     })
-    const shelves = await Shelf.insertMany(shelvesData)
-    console.log('🗄️  Shelves created...'.green)
+    const shelves = await Location.insertMany(shelvesData)
+    console.log('🗄️  Shelves/Locations created...'.green)
 
     // 6. CREATE PRODUCTS
     const categories = [

@@ -52,10 +52,12 @@ exports.getLocations = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/locations/:id
 // @access  Private
 exports.getLocation = asyncHandler(async (req, res, next) => {
-  const location = await Location.findById(req.params.id).populate(
-    'warehouse',
-    'name'
-  )
+  const location = await getLocationById(req.params.id, {
+    populate: {
+      path: 'warehouse',
+      select: 'name',
+    },
+  })
 
   if (!location) {
     req.log.warn({ locationId: req.params.id }, 'Location not found')
@@ -74,10 +76,7 @@ exports.getLocation = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/v1/locations/:id
 // @access  Private/Admin/Manager
 exports.updateLocation = asyncHandler(async (req, res, next) => {
-  const location = await Location.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  })
+  const location = await getLocationById(req.params.id)
 
   if (!location) {
     req.log.warn(
@@ -87,6 +86,9 @@ exports.updateLocation = asyncHandler(async (req, res, next) => {
     res.status(404)
     throw new Error('Location not found')
   }
+
+  Object.assign(location, req.body)
+  await location.save()
 
   res.locals.statusCode = 200
   res.locals.data = location
@@ -99,7 +101,7 @@ exports.updateLocation = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/locations/:id
 // @access  Private/Admin
 exports.deleteLocation = asyncHandler(async (req, res, next) => {
-  const location = await Location.findById(req.params.id)
+  const location = await getLocationById(req.params.id)
 
   if (!location) {
     req.log.warn(
@@ -118,3 +120,11 @@ exports.deleteLocation = asyncHandler(async (req, res, next) => {
 
   next()
 })
+
+const getLocationById = async (locationId, { populate = [] } = {}) => {
+  let query = Location.findById(locationId)
+  if (populate.length) {
+    query.populate(populate)
+  }
+  return query
+}

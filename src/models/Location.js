@@ -13,22 +13,7 @@ const locationSchema = new mongoose.Schema(
       ref: 'Warehouse',
       required: [true, 'Warehouse reference is required'],
     },
-    zone: {
-      type: String,
-      required: [true, 'Zone is required (e.g., A)'],
-      trim: true,
-      uppercase: true,
-    },
-    aisle: {
-      type: String,
-      required: [true, 'Aisle is required (e.g., 01)'],
-      trim: true,
-    },
-    rack: {
-      type: String,
-      required: [true, 'Rack is required (e.g., 02)'],
-      trim: true,
-    },
+
     status: {
       type: String,
       enum: ['Empty', 'Partial', 'Full', 'Inactive'],
@@ -44,19 +29,5 @@ const locationSchema = new mongoose.Schema(
 
 // 🔥 CRITICAL: Prevent duplicate location codes in the SAME warehouse
 locationSchema.index({ code: 1, warehouse: 1 }, { unique: true })
-
-// Virtual property: Aliases 'code' as 'barcode'
-// This doesn't save to the database, but it lets your frontend request location.barcode
-locationSchema.virtual('barcode').get(function () {
-  return this.code
-})
-
-// Optional: Auto-generate the code before saving if it wasn't provided
-locationSchema.pre('validate', function (next) {
-  if (!this.code && this.zone && this.aisle && this.rack) {
-    this.code = `${this.zone}-${this.aisle}-${this.rack}`
-  }
-  // next()
-})
 
 module.exports = mongoose.model('Location', locationSchema)

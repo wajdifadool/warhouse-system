@@ -69,6 +69,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res)
 })
 
+//TODO:
 // @desc    Log user out / clear Cookie
 // @route   GET /api/v1/auth/logout
 // @access  Private

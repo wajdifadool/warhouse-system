@@ -6,12 +6,17 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductByBarcode,
+  getProductByBySKU,
 } = require('./products.controller')
+
+// worker', 'viewer', 'manager', 'admin
 
 const { protect, authorize } = require('../../middleware/auth')
 const ADMIN_STRING = 'admin'
 const MANAGER_STRING = 'manager'
 const USER_STRING = 'user'
+
 router
   .route('/')
   .get(getProducts)
@@ -20,6 +25,9 @@ router
     authorize(USER_STRING, ADMIN_STRING, MANAGER_STRING),
     createProduct
   )
+
+router.route('/barcode/:barcode').get(getProductByBarcode)
+router.route('/sku/:sku').get(getProductByBySKU)
 
 router
   .route('/:id')
