@@ -50,7 +50,7 @@ const paginate = async (Model, queryParams) => {
 
   const total = await Model.countDocuments(filter)
 
-  const products = await query.skip(startIndex).limit(limit)
+  const items = await query.skip(startIndex).limit(limit)
 
   const pagination = {}
 
@@ -69,8 +69,8 @@ const paginate = async (Model, queryParams) => {
   }
 
   return {
-    data: products,
-    count: products.length,
+    data: items,
+    count: items.length,
     total,
     pagination,
   }

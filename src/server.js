@@ -66,7 +66,10 @@ app.use(`${API_PREFIX}/auth`, authRoutes)
 app.use(`${API_PREFIX}/recognition`, recognitionRoutes)
 app.use(`${API_PREFIX}/warehouses`, warehouseRoutes)
 app.use(`${API_PREFIX}/locations`, locationRoutes)
+// MERGED PARAMS ROUTES
 app.use(`${API_PREFIX}/inventory`, inventoryRoutes)
+app.use(`${API_PREFIX}/warehouses/:warehouseId/inventory`, inventoryRoutes)
+app.use(`${API_PREFIX}/products/:productId/inventory`, inventoryRoutes)
 // app.use(`${API_PREFIX}/warehouses/:warehouseId/locations`, locationRoutes) // nested Routes
 // app.use(`${API_PREFIX}/shelfs`, shelfRoutes)
 app.use(`${API_PREFIX}/users`, userRoutes)

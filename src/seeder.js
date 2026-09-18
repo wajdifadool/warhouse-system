@@ -6,7 +6,7 @@ const colors = require('colors')
 const Product = require('./models/Product')
 const User = require('./models//User')
 const Warehouse = require('./models/Warehouse')
-const Shelf = require('./models/Shelf')
+// const Shelf = require('./models/Shelf')
 const Inventory = require('./models/Inventory')
 const Location = require('./models/Location')
 
@@ -22,7 +22,7 @@ const importData = async () => {
     // 1. CLEAR EXISTING DATA
     await Inventory.deleteMany()
     await Product.deleteMany()
-    await Shelf.deleteMany()
+
     await Warehouse.deleteMany()
     await User.deleteMany()
     await Location.deleteMany()
@@ -31,7 +31,7 @@ const importData = async () => {
     await Promise.all([
       Inventory.collection.dropIndexes().catch(() => {}),
       Product.collection.dropIndexes().catch(() => {}),
-      Shelf.collection.dropIndexes().catch(() => {}),
+
       Warehouse.collection.dropIndexes().catch(() => {}),
       User.collection.dropIndexes().catch(() => {}),
       Location.collection.dropIndexes().catch(() => {}),
@@ -159,7 +159,7 @@ const destroyData = async () => {
 
     await Inventory.deleteMany()
     await Product.deleteMany()
-    await Shelf.deleteMany()
+
     await Warehouse.deleteMany()
     await User.deleteMany()
 

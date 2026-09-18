@@ -1,5 +1,5 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 const { protect, authorize } = require('../../middleware/auth')
 const { businessLogger } = require('../../middleware/loggerMiddleware')
@@ -10,6 +10,7 @@ const {
   GetInventory,
   GetAllInventory,
   UpdateInventory,
+  createInventoryTransfer,
 } = require('./inventory.controller')
 
 const ADMIN_STRING = 'admin'
@@ -20,6 +21,10 @@ router.use(authorize(ADMIN_STRING))
 
 // Routes
 router.post('/', createInventory)
+router.get('/', GetAllInventory)
+
+router.post('/transfer', createInventoryTransfer)
+
 router.get('/:id', GetInventory)
 router.put('/:id', UpdateInventory)
 
@@ -27,5 +32,4 @@ router.put('/:id', UpdateInventory)
 router.use(businessLogger)
 router.use(sendResponse)
 
-router.get('/', GetAllInventory, businessLogger)
 module.exports = router
