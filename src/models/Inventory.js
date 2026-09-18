@@ -13,9 +13,9 @@ const InventorySchema = new mongoose.Schema(
       ref: 'Warehouse',
       required: true,
     },
-    shelf: {
+    location: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Shelf',
+      ref: 'Location',
       required: true,
     },
     quantity: {
@@ -29,6 +29,6 @@ const InventorySchema = new mongoose.Schema(
 )
 
 // Ensure we don't have multiple inventory records for the exact same product on the exact same shelf
-InventorySchema.index({ product: 1, shelf: 1 }, { unique: true })
+// InventorySchema.index({ product: 1, location: 1 }, { unique: true })
 
 module.exports = mongoose.model('Inventory', InventorySchema)
