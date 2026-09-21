@@ -3,7 +3,8 @@ const Inventory = require('../../models/Inventory')
 const Location = require('../../models/Location')
 const Warehouse = require('../../models/Warehouse')
 const Product = require('../../models/Product')
-const InventoryTransfer = require('../../models/InventoryTransfer')
+// const InventoryTransfer = require('../../models/InventoryTransfer')
+const InventoryMovement = require('../../models/InventoryMovement')
 
 const asyncHandler = require('../../middleware/asyncHandler')
 const ErrorResponse = require('../../utils/ErrorResponse')
@@ -130,11 +131,14 @@ exports.UpdateInventory = asyncHandler(async (req, res, next) => {
 exports.createInventoryTransfer = asyncHandler(async (req, res, next) => {
   // const { productId, fromLocationId, toLocationId, quantity, reason } = req.body
   const {
-    product: productId,
-    fromLocation: fromLocationId,
-    toLocation: toLocationId,
+    productId,
+    warehouseId,
+    fromLocationId,
+    toLocationId,
     quantity,
     reason,
+    type,
+    referenceId,
   } = req.body
 
   // ============================================================
@@ -408,14 +412,18 @@ exports.createInventoryTransfer = asyncHandler(async (req, res, next) => {
       // Reason: Shelf optimization
       // ========================================================
 
-      const createdTransfer = await InventoryTransfer.create(
+      const createdTransfer = await InventoryMovement.create(
         [
           {
             productId,
+            warehouseId,
             fromLocationId,
             toLocationId,
             quantity,
+            type,
             reason,
+            performedBy: req.user._id,
+            referenceId,
           },
         ],
         { session }
