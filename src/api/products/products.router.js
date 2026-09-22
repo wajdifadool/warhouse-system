@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const { protect, authorize } = require('../../middleware/auth')
 const {
   getProducts,
   getProduct,
@@ -10,29 +11,22 @@ const {
   getProductByBySKU,
 } = require('./products.controller')
 
-// worker', 'viewer', 'manager', 'admin
+const ADMIN = 'admin'
+const MANAGER = 'manager'
+const WORKER = 'worker'
 
-const { protect, authorize } = require('../../middleware/auth')
-const ADMIN_STRING = 'admin'
-const MANAGER_STRING = 'manager'
-const USER_STRING = 'user'
+router.use(protect)
+router.use(authorize(ADMIN, MANAGER, WORKER))
 
-router
-  .route('/')
-  .get(getProducts)
-  .post(
-    protect,
-    authorize(USER_STRING, ADMIN_STRING, MANAGER_STRING),
-    createProduct
-  )
+router.get('/', getProducts)
+router.get('/barcode/:barcode', getProductByBarcode)
+router.get('/sku/:sku', getProductByBySKU)
+router.post('/', createProduct)
+router.get('/:id', getProduct)
+router.put('/:id', updateProduct)
 
-router.route('/barcode/:barcode').get(getProductByBarcode)
-router.route('/sku/:sku').get(getProductByBySKU)
+router.delete('/:id', authorize(ADMIN, MANAGER), deleteProduct) //admin + manager
 
-router
-  .route('/:id')
-  .get(getProduct)
-  .put(authorize(ADMIN_STRING, MANAGER_STRING), updateProduct)
-  .delete(authorize(ADMIN_STRING, MANAGER_STRING), deleteProduct)
+// TODO:Add Other Middlewares !
 
 module.exports = router

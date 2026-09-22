@@ -3,12 +3,12 @@ const Inventory = require('../../models/Inventory')
 const Location = require('../../models/Location')
 const Warehouse = require('../../models/Warehouse')
 const Product = require('../../models/Product')
-// const InventoryTransfer = require('../../models/InventoryTransfer')
 const InventoryMovement = require('../../models/InventoryMovement')
 
 const asyncHandler = require('../../middleware/asyncHandler')
 const ErrorResponse = require('../../utils/ErrorResponse')
 const { paginate } = require('../../utils/pagination')
+const { AuditActions, AuditResources } = require('../audit/audit.constants')
 // @desc    Create new Inventory
 // @route   POST /api/v1/inventory
 // @access  Private/Admin/Manager
@@ -38,7 +38,6 @@ exports.createInventory = asyncHandler(async (req, res, next) => {
   }
 
   //   Location
-
   if (!LocationExiset) {
     req.log.warn(
       { locationId: req.body.location },
@@ -49,6 +48,18 @@ exports.createInventory = asyncHandler(async (req, res, next) => {
   }
 
   const inventory = await Inventory.create(req.body)
+
+  // AUDIT
+  res.locals.audit = {
+    action: AuditActions.INVENTORY_CREATED,
+    resourceType: AuditResources.INVENTORY,
+    resourceId: inventory._id,
+    metadata: {
+      warehouse,
+      product,
+      location,
+    },
+  }
 
   // Pass data and instructions down the pipeline
   res.locals.statusCode = 201
@@ -117,6 +128,16 @@ exports.UpdateInventory = asyncHandler(async (req, res, next) => {
   // Object.assign(inventory, { quantity: req.body.quantity }); the same
   inventory.quantity = req.body.quantity
   await inventory.save()
+
+  // AUDIT
+  res.locals.audit = {
+    action: AuditActions.INVENTORY_UPDATED,
+    resourceType: AuditResources.INVENTORY,
+    resourceId: inventory._id,
+    metadata: {
+      quantity: req.body.quantity,
+    },
+  }
 
   res.locals.statusCode = 200
   res.locals.data = inventory
@@ -442,6 +463,24 @@ exports.createInventoryTransfer = asyncHandler(async (req, res, next) => {
     // - Transfer history was created
     //c
     // ============================================================
+
+    // AUDIT TODO:
+    res.locals.audit = {
+      action: AuditActions.INVENTORY_TRANSFER,
+      resourceType: AuditResources.INVENTORY,
+      resourceId: transfer._id,
+      metadata: {
+        productId,
+        warehouseId,
+        fromLocationId,
+        toLocationId,
+        quantity,
+        type,
+        reason,
+        performedBy: req.user._id,
+        referenceId,
+      },
+    }
 
     res.locals.statusCode = 201
     res.locals.data = transfer

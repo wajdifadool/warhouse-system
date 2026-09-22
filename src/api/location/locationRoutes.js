@@ -1,12 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
-// Middleware imports
-const { protect, authorize } = require('../../middleware/auth') // Your security middleware
+const { protect, authorize } = require('../../middleware/auth')
 const { businessLogger } = require('../../middleware/loggerMiddleware')
 const { sendResponse } = require('../../middleware/responseMiddleware')
 
-// Controller imports
 const {
   createLocation,
   getLocations,
@@ -15,39 +13,23 @@ const {
   deleteLocation,
 } = require('./locationController')
 
-// Define the Roles constants (assuming you have these in a constants file or similar)
 const ADMIN_STRING = 'admin'
 const MANAGER_STRING = 'manager'
-const USER_STRING = 'user'
+const WORKER_STRING = 'worker'
 
-// Routes for /api/v1/locations
-router
-  .route('/')
-  .get(protect, getLocations, businessLogger, sendResponse)
-  .post(
-    protect,
-    authorize(ADMIN_STRING, MANAGER_STRING),
-    createLocation,
-    businessLogger,
-    sendResponse
-  )
+router.use(protect)
+router.use(authorize(ADMIN_STRING, MANAGER_STRING, WORKER_STRING))
 
-router
-  .route('/:id')
-  .get(protect, getLocation, businessLogger, sendResponse)
-  .put(
-    protect,
-    authorize(ADMIN_STRING, MANAGER_STRING),
-    updateLocation,
-    businessLogger,
-    sendResponse
-  )
-  .delete(
-    protect,
-    authorize(ADMIN_STRING), // Maybe only admins can delete?
-    deleteLocation,
-    businessLogger,
-    sendResponse
-  )
+router.get('/', getLocations)
+router.post('/', createLocation)
+router.get('/:id', getLocation)
+router.put('/:id', updateLocation)
 
+// DELETE needs admin only
+router.delete('/:id', authorize(ADMIN_STRING), deleteLocation)
+
+// Everything after controllers
+// router.use(auditMiddleware) //TODO:
+router.use(businessLogger)
+router.use(sendResponse)
 module.exports = router

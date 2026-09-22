@@ -3,6 +3,8 @@ const router = express.Router({ mergeParams: true })
 
 const { protect, authorize } = require('../../middleware/auth')
 const { businessLogger } = require('../../middleware/loggerMiddleware')
+const auditMiddleware = require('../../middleware/auditMiddleware')
+
 const { sendResponse } = require('../../middleware/responseMiddleware')
 
 const {
@@ -29,6 +31,7 @@ router.get('/:id', GetInventory)
 router.put('/:id', UpdateInventory)
 
 // Applies to every route AFTER the controller
+router.use(auditMiddleware)
 router.use(businessLogger)
 router.use(sendResponse)
 
